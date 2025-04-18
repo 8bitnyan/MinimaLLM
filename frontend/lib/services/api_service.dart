@@ -1,0 +1,48 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class ChatResponse {
+  final String response;
+  final List<Map<String, dynamic>>? sources;
+
+  ChatResponse({required this.response, this.sources});
+
+  factory ChatResponse.fromJson(Map<String, dynamic> json) {
+    return ChatResponse(
+      response: json['response'],
+      sources: json['sources'] != null
+          ? List<Map<String, dynamic>>.from(json['sources'])
+          : null,
+    );
+  }
+}
+
+class ApiService {
+  // Replace with the URL provided by minikube service minima-backend --url
+  final String baseUrl = "http://127.0.0.1:59659";
+
+  Future<ChatResponse> sendMessage(String message, bool useWebSearch) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/chat'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'message': message, 'use_web_search': useWebSearch}),
+      );
+
+      if (response.statusCode == 200) {
+        return ChatResponse.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception('Failed to send message: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error communicating with server: $e');
+    }
+  }
+
+  Future<String> uploadFile(dynamic file) async {
+    // This is a placeholder for file upload functionality
+    // In a real implementation, you would use a multipart request
+    // to send the file to the server
+    return "File upload not implemented yet";
+  }
+}
