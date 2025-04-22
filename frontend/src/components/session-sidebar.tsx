@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { BookOpen, FolderPlus, MoreHorizontal, Plus, Search, Settings, Trash2, User2 } from "lucide-react"
+import { BookOpen, FolderPlus, Home, MoreHorizontal, Plus, Search, Settings, Trash2, User2 } from "lucide-react"
 import { useSidebar } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -24,14 +24,27 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useSession } from "@/contexts/session-context"
+import { useAppRouter } from "@/components/app-router"
 
-export function SessionSidebar() {
+interface SessionSidebarProps {
+  onSessionSelected?: () => void;
+}
+
+export function SessionSidebar({ onSessionSelected }: SessionSidebarProps) {
   const { sessions, activeSessionId, setActiveSessionId, createSession, deleteSession } = useSession()
   const { open } = useSidebar()
+  const { navigate, currentPath } = useAppRouter()
 
   const [newSessionName, setNewSessionName] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  
+  // Check if dashboard is active
+  const isDashboardActive = currentPath === "/dashboard" || currentPath === "/"
+  
+  // Check if account or settings are active
+  const isAccountActive = currentPath === "/account"
+  const isSettingsActive = currentPath === "/settings"
 
   // Filter sessions based on search query
   const filteredSessions = sessions.filter((session) => 
@@ -46,6 +59,20 @@ export function SessionSidebar() {
     setNewSessionName("")
     setIsCreateDialogOpen(false)
   }
+
+  // Handle session selection
+  const handleSessionSelect = (sessionId: string) => {
+    setActiveSessionId(sessionId);
+    
+    // Call the onSessionSelected callback if provided
+    if (onSessionSelected) {
+      onSessionSelected();
+    }
+    // Navigate to dashboard if on settings or account page
+    else if (currentPath === "/settings" || currentPath === "/account") {
+      navigate("/dashboard");
+    }
+  };
 
   // Get icon for session type
   const getSessionIcon = (type?: string) => {
@@ -66,12 +93,12 @@ export function SessionSidebar() {
   return (
     <aside
       className={cn(
-        "h-screen border-r border-border bg-background transition-all duration-300 ease-in-out",
+        "h-screen flex flex-col border-r border-border bg-background transition-all duration-300 ease-in-out z-sidebar overflow-hidden",
         open ? "w-64" : "w-16",
       )}
     >
       {/* Sidebar Header */}
-      <div className="border-b border-border p-4">
+      <div className="border-b border-border p-4 flex-shrink-0">
         <div className={cn("flex items-center", open ? "justify-between" : "justify-center")}>
           {open && <h2 className="text-lg font-semibold">minimaLLM</h2>}
         </div>
@@ -88,7 +115,26 @@ export function SessionSidebar() {
       </div>
 
       {/* Sidebar Content */}
-      <div className="h-[calc(100vh-8rem)] overflow-y-auto p-2">
+      <div className="flex-grow overflow-y-auto p-2">
+        {/* Home/Dashboard */}
+        <div className="mb-4">
+          <Button
+            variant="ghost"
+            size={open ? "default" : "icon"}
+            className={cn(
+              "w-full justify-start hover:bg-muted", 
+              !open && "justify-center px-0",
+              isDashboardActive && "bg-secondary text-secondary-foreground"
+            )}
+            onClick={() => navigate("/dashboard")}
+          >
+            <Home className="h-4 w-4" />
+            {open && <span className="ml-2">Dashboard</span>}
+          </Button>
+        </div>
+
+        <div className="my-2 h-px bg-border" />
+
         {/* Study Sessions */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
@@ -150,7 +196,7 @@ export function SessionSidebar() {
                       !open && "justify-center px-0",
                       activeSessionId === session.id ? "bg-secondary text-secondary-foreground" : "hover:bg-muted",
                     )}
-                    onClick={() => setActiveSessionId(session.id)}
+                    onClick={() => handleSessionSelect(session.id)}
                   >
                     {getSessionIcon()}
                     {open && <span className="ml-2">{session.title}</span>}
@@ -228,13 +274,18 @@ export function SessionSidebar() {
       </div>
 
       {/* Sidebar Footer */}
-      <div className="absolute bottom-0 left-0 right-0 border-t border-border p-2">
+      <div className="border-t border-border p-2 flex-shrink-0">
         <ul className="space-y-1">
           <li>
             <Button
               variant="ghost"
               size={open ? "default" : "icon"}
-              className={cn("w-full justify-start hover:bg-muted", !open && "justify-center px-0")}
+              className={cn(
+                "w-full justify-start hover:bg-muted sidebar-footer-btn", 
+                !open && "justify-center px-0",
+                isAccountActive && "bg-secondary text-secondary-foreground"
+              )}
+              onClick={() => navigate("/account")}
             >
               <User2 className="h-4 w-4" />
               {open && <span className="ml-2">Account</span>}
@@ -244,7 +295,12 @@ export function SessionSidebar() {
             <Button
               variant="ghost"
               size={open ? "default" : "icon"}
-              className={cn("w-full justify-start hover:bg-muted", !open && "justify-center px-0")}
+              className={cn(
+                "w-full justify-start hover:bg-muted sidebar-footer-btn", 
+                !open && "justify-center px-0",
+                isSettingsActive && "bg-secondary text-secondary-foreground"
+              )}
+              onClick={() => navigate("/settings")}
             >
               <Settings className="h-4 w-4" />
               {open && <span className="ml-2">Settings</span>}

@@ -118,3 +118,56 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom styles for smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Fix z-index and layering issues */
+.z-sidebar {
+  z-index: 40;
+}
+
+.z-header {
+  z-index: 30;
+}
+
+.z-content {
+  z-index: 20;
+}
+
+.z-modal {
+  z-index: 50;
+}
+
+/* Fix layout issues */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Ensure tabs content area is scrollable */
+.tabs-content-scrollable {
+  max-height: calc(100vh - 16rem);
+  overflow-y: auto;
+}
+
+/* Fix sidebar footer button width issues */
+.sidebar-footer-btn {
+  width: 100%;
+  max-width: 100%;
+}

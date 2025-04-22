@@ -12,7 +12,7 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 DEFAULT_LLM = os.getenv("DEFAULT_LLM", "openai")  # openai or gemini
 
 # Model configurations
-OPENAI_MODEL = "gpt-4o-mini"
+OPENAI_MODEL = "gpt-4.1-nano"
 GEMINI_MODEL = "gemini-1.5-pro-latest"
 
 # Check if API keys are set

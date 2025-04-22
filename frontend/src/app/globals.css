@@ -43,6 +43,10 @@ body {
     --ring: 30 5% 31%;
 
     --radius: 0.5rem;
+    
+    /* Sidebar widths */
+    --sidebar-width: 280px;
+    --collapsed-sidebar-width: 80px;
   }
 
   .dark {
