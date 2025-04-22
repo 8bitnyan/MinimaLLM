@@ -1,17 +1,140 @@
-# minimaLLM
+⸻
 
-A minimal implementation of a language model interface, using OpenAI and Google Gemini APIs with a React frontend and Supabase for authentication and data storage.
+📚 minimaLLM – Your AI-Powered Study & Research Assistant
 
-## Features
+minimaLLM is an intelligent and modular assistant designed to support students, researchers, and creators in learning, researching, and building projects. With a minimalistic interface and powerful AI integrations, minimaLLM helps you study smarter, not harder.
 
-- Simple chat interface with OpenAI and Gemini support
-- User authentication with Supabase
-- Persistent chat sessions per user
-- Real-time updates for collaborative viewing
-- Multiple chat history management
-- Easy provider switching
-- API key configuration
-- Minimalist design with Tailwind CSS
+⸻
+
+🧠 What It Does
+
+minimaLLM brings together essential tools to streamline your workflow:
+	•	📝 Text Summarizer
+Automatically distill complex texts, articles, or notes into clear and concise summaries.
+	•	💡 Flashcard Generator
+Turn raw text or uploaded materials into smart flashcards for active recall learning.
+	•	🔍 AI-Powered Web Search
+Augment your queries with contextual search results and real-time information from the web.
+	•	🧭 Research & Project Planning Toolkit
+Structure ideas, generate outlines, and get AI-assisted support for academic or creative project design.
+	•	📂 Document Upload & Parsing
+Upload PDFs, DOCX, or TXT files to extract content, summarize key points, and generate study tools.
+
+⸻
+
+🎓 Use Cases
+	•	Students preparing for exams or assignments
+	•	Researchers synthesizing sources and building literature reviews
+	•	Teams organizing project documentation and research workflows
+	•	Self-learners building personalized learning plans
+
+⸻
+
+🔧 Tech Stack Overview
+	•	Frontend: React.js (clean, minimal interface)
+	•	Backend: FastAPI (Python) or Node.js
+	•	Database: Supabase (PostgreSQL + auth + file storage)
+	•	AI Services: OpenAI GPT-4o, web search APIs, summarization agents
+	•	Storage: Supabase Storage or S3-compatible options
+
+⸻
+
+🌟 Why minimaLLM?
+	•	📌 All-in-one AI companion for studying, researching, and building
+	•	✨ Simple interface with powerful behind-the-scenes logic
+	•	🧩 Modular architecture — easily extend with new AI tools
+	•	⏱️ Saves time and enhances retention through AI-enhanced learning
+
+⸻
+
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js and npm (for the frontend)
+- Python 3.8+ (for the backend)
+- API keys for OpenAI and Google Gemini (optional if you only want to use one service)
+
+### Installation
+
+#### Setting up the backend
+
+1. Navigate to the backend directory:
+```bash
+cd backend
+```
+
+2. Create a Python virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install the required Python packages:
+```bash
+pip install -r requirements.txt
+```
+
+4. Set up environment variables in a `.env` file:
+```
+OPENAI_API_KEY=your_openai_api_key_here
+GOOGLE_API_KEY=your_google_api_key_here
+DEFAULT_LLM=openai
+```
+
+5. Start the backend server:
+```bash
+python run.py
+```
+
+#### Setting up the frontend
+
+1. Navigate to the frontend directory:
+```bash
+cd frontend
+```
+
+2. Install the required npm packages:
+```bash
+npm install
+```
+
+3. Set up environment variables in a `.env` file:
+```
+VITE_SUPABASE_URL=your_supabase_url_here
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+```
+
+4. Start the frontend development server:
+```bash
+npm run dev
+```
+
+5. Open your browser and navigate to:
+```
+http://localhost:5173
+```
+
+## Using the Study Assistant
+
+1. **Sign Up/Login**: Create an account or sign in to access your study instances
+2. **Create a Study Instance**: Click "New Study Instance" to start a new conversation
+3. **Select Study Tools**: Choose which tools you want to use for your current study session
+4. **Ask Questions**: Type your questions or topics you want to study
+5. **Access Past Instances**: All your study instances are automatically saved and can be accessed from the sidebar
+6. **Delete Instances**: You can delete instances you no longer need by clicking the trash icon
+
+## Database Setup
+
+Follow the instructions in `frontend/SUPABASE_SETUP.md` to set up your Supabase database correctly.
+
+## Development
+
+This project uses:
+- React with Vite for the frontend
+- Flask for the backend API
+- Supabase for authentication and database
 
 ## Project Structure
 
@@ -37,71 +160,6 @@ minimaLLM/
     ├── requirements.txt      # Python dependencies
     └── run.py                # Application entry point
 ```
-
-## Setup
-
-### Backend
-
-1. Create a Python virtual environment (recommended):
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-2. Install dependencies:
-   ```
-   cd backend
-   pip install -r requirements.txt
-   ```
-
-3. Set up API keys (create a `.env` file in the `backend` directory):
-   ```
-   # OpenAI API Key
-   OPENAI_API_KEY=your_openai_api_key_here
-   
-   # Google Gemini API Key
-   GOOGLE_API_KEY=your_google_api_key_here
-   
-   # Default LLM provider (openai or gemini)
-   DEFAULT_LLM=openai
-   ```
-
-4. Run the backend:
-   ```
-   python run.py
-   ```
-
-The backend will be available at `http://localhost:5000`.
-
-### Supabase Setup
-
-Before running the frontend, you need to set up Supabase:
-
-1. Create a Supabase project at [supabase.com](https://supabase.com)
-2. Set up the database tables and authentication as described in `frontend/SUPABASE_SETUP.md`
-3. Create a `.env` file in the frontend directory with your Supabase URL and anon key
-
-### Frontend
-
-1. Install dependencies:
-   ```
-   cd frontend
-   npm install
-   npm install -D @tailwindcss/postcss autoprefixer
-   ```
-
-2. Configure Supabase (create a `.env` file in the `frontend` directory):
-   ```
-   VITE_SUPABASE_URL=your_supabase_url_here
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
-   ```
-
-3. Start the development server:
-   ```
-   npm run dev
-   ```
-
-The frontend will be available at `http://localhost:5173` or `http://localhost:5174`.
 
 ## API Endpoints
 

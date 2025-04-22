@@ -36,15 +36,34 @@ class LLMService:
         try:
             logger.info(f"Sending prompt to OpenAI. Model: {config.OPENAI_MODEL}")
             
-            response = openai.chat.completions.create(
-                model=config.OPENAI_MODEL,
-                messages=[
-                    {"role": "system", "content": "You are a helpful AI assistant."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=temperature,
-                max_tokens=max_tokens
-            )
+            # Check if the prompt contains system instructions
+            if "You are a helpful study assistant" in prompt and "User question:" in prompt:
+                # Extract system prompt and user question
+                parts = prompt.split("User question:", 1)
+                system_prompt = parts[0].strip()
+                user_prompt = parts[1].strip() if len(parts) > 1 else prompt
+                
+                # Format as ChatCompletion with system and user messages
+                response = openai.chat.completions.create(
+                    model=config.OPENAI_MODEL,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=temperature,
+                    max_tokens=max_tokens
+                )
+            else:
+                # Standard prompt
+                response = openai.chat.completions.create(
+                    model=config.OPENAI_MODEL,
+                    messages=[
+                        {"role": "system", "content": "You are a helpful AI assistant."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=temperature,
+                    max_tokens=max_tokens
+                )
             
             return response.choices[0].message.content.strip()
         except Exception as e:
@@ -65,6 +84,7 @@ class LLMService:
                 }
             )
             
+            # For Gemini, we just send the whole prompt
             response = model.generate_content(prompt)
             return response.text.strip()
         except Exception as e:
