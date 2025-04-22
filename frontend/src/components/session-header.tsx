@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 
 export function SessionHeader() {
   const { activeSession } = useSession()
-  const { isOpen, toggleSidebar } = useSidebar()
+  const { open, toggleSidebar } = useSidebar()
 
   // Get icon for session type
   const getSessionIcon = (type: string) => {
@@ -36,7 +36,7 @@ export function SessionHeader() {
             onClick={toggleSidebar}
             className="text-foreground hover:bg-muted hover:text-foreground mr-1"
           >
-            {isOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            {open ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </Button>
           <div className="flex items-center gap-2">
             {activeSession && getSessionIcon(activeSession.type)}

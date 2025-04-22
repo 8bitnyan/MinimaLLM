@@ -23,31 +23,32 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useSession, type StudySession } from "@/contexts/session-context"
+import { useSession } from "@/contexts/session-context"
 
 export function SessionSidebar() {
   const { sessions, activeSessionId, setActiveSessionId, createSession, deleteSession } = useSession()
-  const { isOpen } = useSidebar()
+  const { open } = useSidebar()
 
   const [newSessionName, setNewSessionName] = useState("")
-  const [newSessionType, setNewSessionType] = useState<StudySession["type"]>("notes")
   const [searchQuery, setSearchQuery] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
   // Filter sessions based on search query
-  const filteredSessions = sessions.filter((session) => session.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredSessions = sessions.filter((session) => 
+    session && session.title && session.title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   // Create a new session
   const handleCreateSession = () => {
     if (!newSessionName.trim()) return
 
-    createSession(newSessionName, newSessionType)
+    createSession(newSessionName)
     setNewSessionName("")
     setIsCreateDialogOpen(false)
   }
 
   // Get icon for session type
-  const getSessionIcon = (type: StudySession["type"]) => {
+  const getSessionIcon = (type?: string) => {
     switch (type) {
       case "notes":
         return <BookOpen className="h-4 w-4" />
@@ -66,15 +67,15 @@ export function SessionSidebar() {
     <aside
       className={cn(
         "h-screen border-r border-border bg-background transition-all duration-300 ease-in-out",
-        isOpen ? "w-64" : "w-16",
+        open ? "w-64" : "w-16",
       )}
     >
       {/* Sidebar Header */}
       <div className="border-b border-border p-4">
-        <div className={cn("flex items-center", isOpen ? "justify-between" : "justify-center")}>
-          {isOpen && <h2 className="text-lg font-semibold">minimaLLM</h2>}
+        <div className={cn("flex items-center", open ? "justify-between" : "justify-center")}>
+          {open && <h2 className="text-lg font-semibold">minimaLLM</h2>}
         </div>
-        {isOpen && (
+        {open && (
           <div className="mt-2">
             <Input
               placeholder="Search sessions..."
@@ -91,7 +92,7 @@ export function SessionSidebar() {
         {/* Study Sessions */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            {isOpen && <h3 className="text-sm font-medium text-foreground">Study Sessions</h3>}
+            {open && <h3 className="text-sm font-medium text-foreground">Study Sessions</h3>}
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button
@@ -99,7 +100,7 @@ export function SessionSidebar() {
                   variant="ghost"
                   className={cn(
                     "h-6 w-6 text-primary hover:text-primary-foreground hover:bg-primary",
-                    !isOpen && "mx-auto",
+                    !open && "mx-auto",
                   )}
                 >
                   <Plus className="h-4 w-4" />
@@ -124,20 +125,6 @@ export function SessionSidebar() {
                       className="bg-muted text-foreground"
                     />
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="type">Session Type</Label>
-                    <select
-                      id="type"
-                      className="flex h-9 w-full rounded-md border border-input bg-muted px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                      value={newSessionType}
-                      onChange={(e) => setNewSessionType(e.target.value as StudySession["type"])}
-                    >
-                      <option value="notes">Notes</option>
-                      <option value="flashcards">Flashcards</option>
-                      <option value="research">Research</option>
-                      <option value="summary">Summary</option>
-                    </select>
-                  </div>
                 </div>
                 <DialogFooter>
                   <Button
@@ -157,19 +144,19 @@ export function SessionSidebar() {
                 <div className="relative flex items-center">
                   <Button
                     variant="ghost"
-                    size={isOpen ? "default" : "icon"}
+                    size={open ? "default" : "icon"}
                     className={cn(
                       "w-full justify-start",
-                      !isOpen && "justify-center px-0",
+                      !open && "justify-center px-0",
                       activeSessionId === session.id ? "bg-secondary text-secondary-foreground" : "hover:bg-muted",
                     )}
                     onClick={() => setActiveSessionId(session.id)}
                   >
-                    {getSessionIcon(session.type)}
-                    {isOpen && <span className="ml-2">{session.name}</span>}
+                    {getSessionIcon()}
+                    {open && <span className="ml-2">{session.title}</span>}
                   </Button>
 
-                  {isOpen && (
+                  {open && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -204,7 +191,7 @@ export function SessionSidebar() {
               </li>
             ))}
 
-            {isOpen && filteredSessions.length === 0 && (
+            {open && filteredSessions.length === 0 && (
               <div className="px-4 py-2 text-sm text-muted-foreground">No sessions found</div>
             )}
           </ul>
@@ -214,26 +201,26 @@ export function SessionSidebar() {
 
         {/* Quick Access */}
         <div>
-          {isOpen && <h3 className="mb-2 text-sm font-medium text-foreground">Quick Access</h3>}
+          {open && <h3 className="mb-2 text-sm font-medium text-foreground">Quick Access</h3>}
           <ul className="space-y-1">
             <li>
               <Button
                 variant="ghost"
-                size={isOpen ? "default" : "icon"}
-                className={cn("w-full justify-start hover:bg-muted", !isOpen && "justify-center px-0")}
+                size={open ? "default" : "icon"}
+                className={cn("w-full justify-start hover:bg-muted", !open && "justify-center px-0")}
               >
                 <BookOpen className="h-4 w-4" />
-                {isOpen && <span className="ml-2">All Notes</span>}
+                {open && <span className="ml-2">All Notes</span>}
               </Button>
             </li>
             <li>
               <Button
                 variant="ghost"
-                size={isOpen ? "default" : "icon"}
-                className={cn("w-full justify-start hover:bg-muted", !isOpen && "justify-center px-0")}
+                size={open ? "default" : "icon"}
+                className={cn("w-full justify-start hover:bg-muted", !open && "justify-center px-0")}
               >
                 <Search className="h-4 w-4" />
-                {isOpen && <span className="ml-2">Recent Searches</span>}
+                {open && <span className="ml-2">Recent Searches</span>}
               </Button>
             </li>
           </ul>
@@ -246,21 +233,21 @@ export function SessionSidebar() {
           <li>
             <Button
               variant="ghost"
-              size={isOpen ? "default" : "icon"}
-              className={cn("w-full justify-start hover:bg-muted", !isOpen && "justify-center px-0")}
+              size={open ? "default" : "icon"}
+              className={cn("w-full justify-start hover:bg-muted", !open && "justify-center px-0")}
             >
               <User2 className="h-4 w-4" />
-              {isOpen && <span className="ml-2">Account</span>}
+              {open && <span className="ml-2">Account</span>}
             </Button>
           </li>
           <li>
             <Button
               variant="ghost"
-              size={isOpen ? "default" : "icon"}
-              className={cn("w-full justify-start hover:bg-muted", !isOpen && "justify-center px-0")}
+              size={open ? "default" : "icon"}
+              className={cn("w-full justify-start hover:bg-muted", !open && "justify-center px-0")}
             >
               <Settings className="h-4 w-4" />
-              {isOpen && <span className="ml-2">Settings</span>}
+              {open && <span className="ml-2">Settings</span>}
             </Button>
           </li>
         </ul>

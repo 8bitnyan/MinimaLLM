@@ -1,32 +1,35 @@
 // Client-side AI actions
 
-import { generateText } from "ai"
-import { openai } from "@ai-sdk/openai"
+import { api } from "./api"
 
 export async function summarizeText(text: string): Promise<string> {
-  const { text: summary } = await generateText({
-    model: openai("gpt-4.1-nano"),
+  const { response } = await api.generate({
     prompt: `Summarize the following text in a concise manner while preserving the key points and main ideas:
     
     ${text}`,
     temperature: 0.3,
+    max_tokens: 500,
+    study_mode: true,
+    active_tools: ["summary"]
   })
 
-  return summary
+  return response
 }
 
 export async function generateFlashcards(text: string): Promise<{ question: string; answer: string }[]> {
-  const { text: flashcardsText } = await generateText({
-    model: openai("gpt-4.1-nano"),
+  const { response } = await api.generate({
     prompt: `Generate 5 flashcards from the following text. Each flashcard should have a question and an answer. Format your response as a JSON array of objects with "question" and "answer" properties:
     
     ${text}`,
     temperature: 0.3,
+    max_tokens: 1000,
+    study_mode: true,
+    active_tools: ["flashcards"]
   })
 
   try {
     // Extract the JSON part from the response
-    const jsonMatch = flashcardsText.match(/\[[\s\S]*\]/)
+    const jsonMatch = response.match(/\[[\s\S]*\]/)
     const jsonString = jsonMatch ? jsonMatch[0] : "[]"
     return JSON.parse(jsonString)
   } catch (error) {
@@ -62,8 +65,7 @@ export async function searchWeb(query: string): Promise<{
     },
   ]
 
-  const { text: answer } = await generateText({
-    model: openai("gpt-4.1-nano"),
+  const { response: answer } = await api.generate({
     prompt: `Answer the following search query based on these search results:
     
     Query: ${query}
@@ -73,6 +75,9 @@ export async function searchWeb(query: string): Promise<{
     
     Provide a comprehensive but concise answer to the query based on the information in the search results.`,
     temperature: 0.3,
+    max_tokens: 800,
+    study_mode: true,
+    active_tools: ["research"]
   })
 
   return {
@@ -82,8 +87,7 @@ export async function searchWeb(query: string): Promise<{
 }
 
 export async function generateResearchPlan(topic: string, description = ""): Promise<string> {
-  const { text: plan } = await generateText({
-    model: openai("gpt-4.1-nano"),
+  const { response: plan } = await api.generate({
     prompt: `Generate a detailed research plan for the following topic:
     
     Topic: ${topic}
@@ -99,6 +103,9 @@ export async function generateResearchPlan(topic: string, description = ""): Pro
     
     Format the plan with clear sections and bullet points where appropriate.`,
     temperature: 0.3,
+    max_tokens: 1000,
+    study_mode: true,
+    active_tools: ["research"]
   })
 
   return plan
