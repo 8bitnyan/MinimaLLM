@@ -21,8 +21,8 @@ def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     
-    # Enable CORS for the frontend
-    CORS(app, resources={r"/api/*": {"origins": os.getenv("FRONTEND_URL", "http://localhost:5173")}})
+    # Enable CORS for all origins and all routes
+    CORS(app)
     
     # Register blueprints
     app.register_blueprint(main_bp)
@@ -36,4 +36,4 @@ def create_app(test_config=None):
     def index():
         return {"status": "minimaLLM API is running", "provider": llm_service.provider}
     
-    return app 
+    return app

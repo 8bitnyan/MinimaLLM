@@ -6,18 +6,27 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { Loader2, ExternalLink } from "lucide-react"
+import { Loader2, ExternalLink, SendToBack } from "lucide-react"
 import { searchWeb } from "@/lib/ai-actions"
 
-interface SearchResult {
+export interface SearchResultItem {
   title: string
   url: string
   snippet: string
 }
 
-export default function WebSearch() {
+export interface SearchResultData {
+  answer: string
+  results: SearchResultItem[]
+}
+
+export interface WebSearchProps {
+  onResults?: (data: SearchResultData) => void
+}
+
+export default function WebSearch({ onResults }: WebSearchProps) {
   const [query, setQuery] = useState("")
-  const [results, setResults] = useState<SearchResult[]>([])
+  const [results, setResults] = useState<SearchResultItem[]>([])
   const [answer, setAnswer] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
@@ -36,6 +45,15 @@ export default function WebSearch() {
       setAnswer("An error occurred while searching. Please try again.")
     } finally {
       setIsLoading(false)
+    }
+  }
+  
+  const handleSendToChat = () => {
+    if (onResults && (answer || results.length > 0)) {
+      onResults({
+        answer,
+        results
+      });
     }
   }
 
@@ -62,6 +80,20 @@ export default function WebSearch() {
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <span className="ml-2">Searching the web...</span>
+        </div>
+      )}
+
+      {(answer || results.length > 0) && !isLoading && (
+        <div className="flex justify-end">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleSendToChat}
+            className="flex items-center gap-2"
+          >
+            <SendToBack className="h-4 w-4" />
+            Use in Chat
+          </Button>
         </div>
       )}
 

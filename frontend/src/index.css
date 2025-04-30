@@ -74,6 +74,10 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  
+  /* Set sidebar and grid widths */
+  --sidebar-width: 280px;
+  --collapsed-sidebar-width: 60px;
 }
 
 .dark {
@@ -170,4 +174,28 @@ html, body {
 .sidebar-footer-btn {
   width: 100%;
   max-width: 100%;
+}
+
+/* Ensure full width layout */
+.w-full {
+  width: 100% !important;
+}
+
+.max-w-full {
+  max-width: 100% !important;
+}
+
+/* Chat visualization styles */
+.chat-visualization {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Grid layout fixes */
+.grid-full-width {
+  grid-template-columns: minmax(var(--sidebar-width), 1fr) minmax(0, 1fr);
+}
+
+.grid-full-width-collapsed {
+  grid-template-columns: minmax(var(--collapsed-sidebar-width), 1fr) minmax(0, 1fr);
 }

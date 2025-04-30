@@ -3,7 +3,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react"
 import supabase from "@/lib/supabase"
 import { useAuth } from "./auth-context"
-import { Database } from "@/lib/database.types"
 
 // Types for our sessions
 export interface StudySession {
@@ -22,6 +21,7 @@ export interface ChatMessage {
   content: string
   provider?: string | null
   created_at: string
+  visualization?: React.ReactNode
 }
 
 interface SessionContextType {
@@ -35,7 +35,7 @@ interface SessionContextType {
   createSession: (title: string) => Promise<string | null>
   updateSession: (id: string, data: Partial<Omit<StudySession, 'id' | 'user_id' | 'created_at'>>) => Promise<void>
   deleteSession: (id: string) => Promise<void>
-  sendMessage: (content: string, provider?: string) => Promise<void>
+  sendMessage: (content: string, provider?: string) => Promise<string | null>
   fetchMessages: (sessionId: string) => Promise<void>
 }
 
@@ -70,12 +70,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
         if (error) throw error
 
-        setSessions(data || [])
-        
-        // Set first session as active if there's no active session
-        if (data && data.length > 0 && !activeSessionId) {
-          setActiveSessionId(data[0].id)
-          await fetchMessages(data[0].id)
+        // Ensure data is StudySession[] and has required fields
+        if (Array.isArray(data) && data.every(item => item && typeof item.id === 'string')) {
+          setSessions(data as unknown as StudySession[])
+          // Set first session as active if there's no active session
+          if (data.length > 0 && !activeSessionId) {
+            const firstId = data[0]?.id
+            if (typeof firstId === 'string') {
+              setActiveSessionId(firstId)
+              await fetchMessages(firstId)
+            }
+          }
+        } else {
+          setSessions([])
         }
       } catch (err) {
         setError(err as Error)
@@ -143,8 +150,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
       if (error) throw error
 
-      setActiveSessionId(data.id)
-      return data.id
+      if (data && typeof data.id === 'string') {
+        setActiveSessionId(data.id)
+        return data.id
+      } else {
+        return null
+      }
     } catch (err) {
       setError(err as Error)
       return null
@@ -161,7 +172,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         .from('chat_sessions')
         .update({ ...data, updated_at: new Date().toISOString() })
         .eq('id', id)
-        .eq('user_id', user?.id)
+        .eq('user_id', typeof user?.id === 'string' ? user.id : '')
 
       if (error) throw error
     } catch (err) {
@@ -179,7 +190,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         .from('chat_sessions')
         .delete()
         .eq('id', id)
-        .eq('user_id', user?.id)
+        .eq('user_id', typeof user?.id === 'string' ? user.id : '')
 
       if (error) throw error
     } catch (err) {
@@ -201,7 +212,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
       if (error) throw error
 
-      setMessages(data || [])
+      // Ensure data is ChatMessage[] and has required fields
+      if (Array.isArray(data) && data.every(item => item && typeof item.id === 'string')) {
+        setMessages(data as unknown as ChatMessage[])
+      } else {
+        setMessages([])
+      }
     } catch (err) {
       setError(err as Error)
     } finally {
@@ -209,43 +225,46 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Send a message
-  const sendMessage = async (content: string, provider?: string) => {
-    if (!user || !activeSessionId) return
+  // Send a message in the active session
+  const sendMessage = async (content: string, provider?: string): Promise<string | null> => {
+    if (!activeSessionId || !user) return null;
     
     try {
-      setLoading(true)
-      
-      // Send user message
-      const userMessage = {
+      setLoading(true);
+      const message = {
         chat_session_id: activeSessionId,
         user_id: user.id,
         role: 'user' as const,
         content,
         provider,
-      }
-
-      const { data: userData, error: userError } = await supabase
+      };
+      
+      // Insert the message
+      const { data, error } = await supabase
         .from('messages')
-        .insert(userMessage)
-        .select()
-        .single()
-
-      if (userError) throw userError
-
-      // Update session's updated_at time
-      await updateSession(activeSessionId, {})
+        .insert(message)
+        .select('id')
+        .single();
+        
+      if (error) throw error;
       
-      // Fetch all messages to ensure we have the latest state
-      await fetchMessages(activeSessionId)
+      // Update the session's updated_at timestamp
+      await supabase
+        .from('chat_sessions')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', activeSessionId);
       
-      return userData.id
+      // Fetch the updated messages
+      await fetchMessages(activeSessionId);
+      
+      return (data && typeof data.id === 'string') ? data.id : null;
     } catch (err) {
-      setError(err as Error)
+      setError(err as Error);
+      return null;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const value = {
     sessions,

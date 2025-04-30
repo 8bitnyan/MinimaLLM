@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://minimallmbackend.com';
 
 interface GenerateOptions {
   prompt: string;
@@ -83,4 +83,4 @@ export const api = {
   },
 };
 
-export default api; 
+export default api;

@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimallm-ingress
+spec:
+  ingressClassName: nginx # Add ingress class name
+  rules:
+    - host: minimallm.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minimallm-frontend
+                port:
+                  number: 80
+    - host: minimallmbackend.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minimallm-backend
+                port:
+                  number: 5000

@@ -14,6 +14,7 @@ export function ChatMessages() {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
+  const [messageVisualizations, setMessageVisualizations] = useState<Record<string, React.ReactNode>>({});
 
   // Function to check if user has scrolled up from bottom
   const checkScroll = () => {
@@ -41,6 +42,24 @@ export function ChatMessages() {
       container.addEventListener("scroll", checkScroll);
       return () => container.removeEventListener("scroll", checkScroll);
     }
+  }, []);
+
+  // Listen for message visualization events
+  useEffect(() => {
+    const handleVisualization = (event: Event) => {
+      const customEvent = event as CustomEvent<{ messageId: string; visualization: React.ReactNode }>;
+      if (customEvent.detail?.messageId && customEvent.detail?.visualization) {
+        setMessageVisualizations(prev => ({
+          ...prev,
+          [customEvent.detail.messageId]: customEvent.detail.visualization
+        }));
+      }
+    };
+
+    document.addEventListener('message-visualization', handleVisualization);
+    return () => {
+      document.removeEventListener('message-visualization', handleVisualization);
+    };
   }, []);
 
   // Auto-scroll to bottom when new messages arrive
@@ -82,7 +101,7 @@ export function ChatMessages() {
           </div>
           
           {/* Messages */}
-          <div className="space-y-6 w-full max-w-4xl mx-auto">
+          <div className="space-y-6 w-full">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -95,13 +114,24 @@ export function ChatMessages() {
                 )}
                 
                 <div
-                  className={`max-w-[80%] rounded-lg p-4 shadow-sm ${
+                  className={`rounded-lg p-4 shadow-sm ${
                     msg.role === "user"
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted/80 border border-border"
                   }`}
+                  style={{ 
+                    maxWidth: messageVisualizations[msg.id] ? "100%" : "80%" 
+                  }}
                 >
                   <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                  
+                  {/* Show visualization if available */}
+                  {messageVisualizations[msg.id] && (
+                    <div className="mt-4 pt-4 border-t border-border/40 chat-visualization">
+                      {messageVisualizations[msg.id]}
+                    </div>
+                  )}
+                  
                   {msg.provider && msg.role === "assistant" && (
                     <p className="text-xs mt-3 opacity-70 border-t border-border/40 pt-2">
                       Powered by {msg.provider}
@@ -167,16 +197,16 @@ export function ChatInputForm() {
       // Send user message
       await messageService.sendUserMessage({
         content: message,
-        sessionId: currentSessionId,
       });
       
       // Clear input
       setMessage("");
 
       // Get AI response
+      // Ensure currentSessionId is passed here if needed by sendAssistantMessage
       await messageService.sendAssistantMessage({
         content: message,
-        sessionId: currentSessionId,
+        sessionId: currentSessionId, 
         userId: user.id,
         activeTools: [], // Add your active tools here
       });
@@ -189,7 +219,7 @@ export function ChatInputForm() {
 
   return (
     <form onSubmit={handleSubmit} className="border-t bg-background/80 backdrop-blur-sm p-4 w-full">
-      <div className="flex space-x-2 max-w-4xl mx-auto">
+      <div className="flex space-x-2 w-full">
         <Input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -197,7 +227,10 @@ export function ChatInputForm() {
           disabled={isLoading || !activeSessionId}
           className="bg-muted/50 flex-1"
         />
-        <Button type="submit" disabled={isLoading || !message.trim() || !activeSessionId}>
+        <Button 
+          type="submit" 
+          disabled={isLoading || !message.trim() || !activeSessionId}
+        >
           {isLoading ? "Sending..." : "Send"}
         </Button>
       </div>
@@ -208,9 +241,9 @@ export function ChatInputForm() {
 // Main component that combines both parts
 export function ChatInterface() {
   return (
-    <div className="flex flex-col h-full w-full max-w-full">
+    <div className="flex flex-col h-full w-full">
       <ChatMessages />
       <ChatInputForm />
     </div>
   );
-} 
+}
