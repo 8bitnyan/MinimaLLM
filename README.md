@@ -1,3 +1,5 @@
+PARK, Sangmin 20725436 sparkat@connect.ust.hk
+
 ⸻
 
 📚 minimaLLM – Your AI-Powered Study & Research Assistant
