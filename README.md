@@ -10,6 +10,7 @@
 - Dockerized the frontend and backend in containers and pushed to the DockerHub
 - Deployed the application Docker image using Kubernetes (Minikube) Cluster with NGINX Ingress Controller
 - Produced presentation slides and video
+- Refined the final report
 
 **PARK, Sangmin**: 
 
