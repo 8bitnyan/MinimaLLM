@@ -1,6 +1,21 @@
+# Group 14
+- PARK, Youkwang; 
+- KIM, Seoyoung; 20799669; skimbj@connect.ust.hk
+- PARK, Sangmin; 
+
+## Contritbutions
+**PARK, Youkwang**: 
+
+**KIM, Seoyoung**:
+- Dockerized the frontend and backend in containers and pushed to the DockerHub
+- Deployed the application Docker image using Kubernetes (Minikube) Cluster with NGINX Ingress Controller
+- Produced presentation slides and video
+
+**PARK, Sangmin**: 
+
 ⸻
 
-📚 minimaLLM – Your AI-Powered Study & Research Assistant
+## 📚 minimaLLM – Your AI-Powered Study & Research Assistant
 
 minimaLLM is an intelligent and modular assistant designed to support students, researchers, and creators in learning, researching, and building projects. With a minimalistic interface and powerful AI integrations, minimaLLM helps you study smarter, not harder.
 
