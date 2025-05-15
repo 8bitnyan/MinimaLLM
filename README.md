@@ -1,7 +1,7 @@
 # Group 14
 - PARK, Youkwang; 
 - KIM, Seoyoung; 20799669; skimbj@connect.ust.hk
-- PARK, Sangmin; 
+- PARK, Sangmin; 20725436; sparkat@connect.ust.hk
 
 ## Contritbutions
 **PARK, Youkwang**: 
@@ -13,6 +13,9 @@
 - Refined the final report
 
 **PARK, Sangmin**: 
+- Documented the final report
+- Dockerized the frontend and backend in containers and pushed to the DockerHub
+- Finalized and refined the final report
 
 ⸻
 
