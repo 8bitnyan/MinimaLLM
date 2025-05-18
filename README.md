@@ -21,7 +21,7 @@
 - Finalized and refined the final report
 
 ## Presentation Video
-<a href="https://youtu.be/LLDqHLp6DHI">Link: https://youtu.be/LLDqHLp6DHI</a>
+Link: <a href="https://youtu.be/LLDqHLp6DHI">https://youtu.be/LLDqHLp6DHI</a>
 
 ⸻
 
