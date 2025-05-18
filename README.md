@@ -20,6 +20,9 @@
 - Dockerized the frontend and backend in containers and pushed to the DockerHub
 - Finalized and refined the final report
 
+## Presentation Video
+<a href="https://youtu.be/LLDqHLp6DHI">Link: https://youtu.be/LLDqHLp6DHI</a>
+
 ⸻
 
 ## 📚 minimaLLM – Your AI-Powered Study & Research Assistant
