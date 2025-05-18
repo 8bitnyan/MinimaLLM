@@ -1,10 +1,13 @@
 # Group 14
-- PARK, Youkwang; 
+- PARK, Youkwang; 20712623; ykpark@connect.ust.hk
 - KIM, Seoyoung; 20799669; skimbj@connect.ust.hk
 - PARK, Sangmin; 20725436; sparkat@connect.ust.hk
 
 ## Contritbutions
 **PARK, Youkwang**: 
+- Orchestrated the goal, design, and implementation of the project from code to deployment
+- Provided basic knowledge on dockerization and K8s
+- Assisted in the documentation of the report for the course submission
 
 **KIM, Seoyoung**:
 - Dockerized the frontend and backend in containers and pushed to the DockerHub
