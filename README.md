@@ -1,8 +1,3 @@
-# Group 14
-- PARK, Youkwang; 20712623; ykpark@connect.ust.hk
-- KIM, Seoyoung; 20799669; skimbj@connect.ust.hk
-- PARK, Sangmin; 20725436; sparkat@connect.ust.hk
-
 ## Contritbutions
 **PARK, Youkwang**: 
 - Orchestrated the goal, design, and implementation of the project from code to deployment
@@ -14,14 +9,6 @@
 - Deployed the application Docker image using Kubernetes (Minikube) Cluster with NGINX Ingress Controller
 - Produced presentation slides and video
 - Refined the final report
-
-**PARK, Sangmin**: 
-- Documented the final report
-- Dockerized the frontend and backend in containers and pushed to the DockerHub
-- Finalized and refined the final report
-
-## Presentation Video
-Link: <a href="https://youtu.be/LLDqHLp6DHI">https://youtu.be/LLDqHLp6DHI</a>
 
 ⸻
 
